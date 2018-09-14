@@ -34,6 +34,8 @@
     - nginx
     - supervisor
     - saveusers
+    - role: create_users_groups
+      when: use_oauth is not defined or not use_oauth
     - role: bash
       when: install_bash_kernel is defined and install_bash_kernel
     - jupyterhub

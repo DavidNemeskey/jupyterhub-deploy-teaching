@@ -1,0 +1,46 @@
+---
+# This playbook creates the users and groups specified in host_vars. Namely,
+# all users in/under the variables
+#   - jupyterhub_admin_users
+#   - jupyterhub_users
+#   - jupyterhub_groups
+# will be created (ensured they exist).
+#
+# Also, the groups in jupyterhub_groups will be created as local system groups.
+#
+# Should only be run in PAM mode.
+
+# This horrible lump of code just assembles the group list and the user: groups
+# mapping
+- name: collect all groups to be created
+  set_fact:
+    groups_to_create: "{{ groups_to_create | default([])}} + ['{{ item.name }}']"
+  loop: "{{ jupyterhub_groups }}"
+- name: collect users to be created -- I/a
+  set_fact:
+    users_to_create: "{{ users_to_create | default({}) | combine({item.1: []}) }}"
+  loop: "{{ jupyterhub_groups | subelements('members') }}"
+- name: collect users to be created -- I/b
+  set_fact:
+    users_to_create: "{{ users_to_create | combine({item: []}) }}"
+  loop: "{{ jupyterhub_admin_users | union(jupyterhub_users) | list }}"
+- name: collect users to be created -- II
+  set_fact:
+      users_to_create: "{{ users_to_create | combine({item.1: users_to_create[item.1] + [item.0.name]}) }}"
+  loop: "{{ jupyterhub_groups | subelements('members') }}"
+
+# The groups and users are created here
+- name: create local groups from jupyterhub groups
+  group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ groups_to_create }}"
+- name: create local users from jupyterhub users
+  user:
+    name: "{{ item.key }}"
+    state: present
+    groups: "{{ item.value }}"
+    append: yes
+    password: "{{ item.key }}"
+    update_password: on_create
+  loop: "{{ users_to_create | dict2items }}"
