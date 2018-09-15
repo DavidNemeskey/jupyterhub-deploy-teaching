@@ -1,0 +1,32 @@
+---
+
+- name: pip install nbgrader
+  pip: name={{item}} state=present executable=pip
+  become: true
+  with_items:
+    - nbgrader
+
+- name: make sure /var/log/nbgrader exists
+  file: path={{nbgrader_log_dir}}/ state={{item}} owner=root group=root mode=0755
+  become: true
+  with_items:
+    - directory
+    - touch
+
+- name: make sure /srv/nbgrader/exchange exists
+  file: path={{nbgrader_exchange_dir}}/ state={{item}} owner=root group=root mode=0777
+  become: true
+  with_items:
+    - directory
+    - touch
+
+- name: install the nbgrader serverextension
+  command: jupyter serverextension enable --sys-prefix --py nbgrader
+  become: true
+
+- name: install the nbgrader nbextensions
+  command: jupyter nbextension {{item}} --sys-prefix --py nbgrader
+  become: true
+  with_items:
+    - install
+    - enable

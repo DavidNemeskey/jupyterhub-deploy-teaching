@@ -1,0 +1,27 @@
+---
+
+# Disables extensions the students should no see, and re-enables them for teachers
+
+- name: disable the create_assignment nbextension for all users
+  command: jupyter nbextension disable --sys-prefix create_assignment/main
+- name: disable the formgrader nbextension for all users
+  command: jupyter nbextension disable --sys-prefix formgrader/main
+- name: disable the formgrader nbextension (section tree) for all users
+  command: jupyter nbextension disable --sys-prefix formgrader/main --section tree
+
+# These could be in a separate file; oh well
+- name: install the create_assignment nbextension for teachers only
+  command: jupyter nbextension enable --user create_assignment/main
+  become: true
+  become_user: {{ item }}
+  loop: "{{ teachers }}"
+- name: install the formgrader nbextension for teachers only
+  command: jupyter nbextension enable --user formgrader/main
+  become: true
+  become_user: {{ item }}
+  loop: "{{ teachers }}"
+- name: install the formgrader (section tree) nbextension for teachers only
+  command: jupyter nbextension enable --user formgrader/main --section tree
+  become: true
+  become_user: {{ item }}
+  loop: "{{ teachers }}"

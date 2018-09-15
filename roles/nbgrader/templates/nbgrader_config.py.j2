@@ -1,0 +1,6 @@
+# Ansible managed
+# Configuration file for nbgrader.
+c = get_config()
+
+c.CourseDirectory.root = u'{{ submissions_prefix }}'
+c.Exchange.course_id = u'{{ course_id }}'
