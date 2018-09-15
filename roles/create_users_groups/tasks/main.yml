@@ -16,10 +16,14 @@
   set_fact:
     groups_to_create: "{{ groups_to_create | default([])}} + ['{{ item.name }}']"
   loop: "{{ jupyterhub_groups }}"
+
 - name: collect users to be created -- I/a
   set_fact:
     users_to_create: "{{ users_to_create | default({}) | combine({item.1: []}) }}"
   loop: "{{ jupyterhub_groups | subelements('members') }}"
+- name: users listed with one of the groups
+  set_fact:
+      group_users: "{{ users_to_create | dict2items | map(attribute='key') | list }}"
 - name: collect users to be created -- I/b
   set_fact:
     users_to_create: "{{ users_to_create | combine({item: []}) }}"
@@ -29,18 +33,30 @@
       users_to_create: "{{ users_to_create | combine({item.1: users_to_create[item.1] + [item.0.name]}) }}"
   loop: "{{ jupyterhub_groups | subelements('members') }}"
 
-# The groups and users are created here
+# Sanity checks
+- name: check if all users are whitelisted
+  assert:
+    that: not (group_users | difference(jupyterhub_users))
+    msg: "all users in jupyterhub_groups must be whitelisted in jupyterhub_users"
+  when: jupyterhub_users is defined and jupyterhub_users
+
 - name: create local groups from jupyterhub groups
   group:
     name: "{{ item }}"
     state: present
   loop: "{{ groups_to_create }}"
+
+- name: create passwords for users
+  include_tasks: passwd.yml
+  loop: "{{ users_to_create | dict2items | map(attribute='key') | list }}"
+  loop_control:
+    loop_var: username
 - name: create local users from jupyterhub users
   user:
     name: "{{ item.key }}"
     state: present
     groups: "{{ item.value }}"
     append: yes
-    password: "{{ item.key }}"
+    password: "{{ passwords[item.key] }}"
     update_password: on_create
   loop: "{{ users_to_create | dict2items }}"

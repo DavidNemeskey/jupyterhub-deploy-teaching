@@ -1,0 +1,13 @@
+---
+# Encrypts user passwords, so that they can be used as a parameter to
+# user.password.
+#
+# Input: the `username`
+# Output: `passwords`: a {user name: hashed password} dictionary
+- name: Crypting...
+  local_action: command python -c 'import crypt; import sys; sys.stdout.write(crypt.crypt("{{ username }}", "$1$SaltCube") + "\n")'
+  register: passwd
+  become: false
+
+- set_fact:
+    passwords: "{{ passwords|default({}) | combine({username: passwd.stdout}) }}"
