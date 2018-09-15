@@ -1,3 +1,19 @@
+# Changes to the original repo
+
+I have made the following changes to the repo:
+
+1. Ensure that the default UI is the classic one (`/tree`). I have opened an
+   [issue](https://github.com/jupyterhub/jupyterhub-deploy-teaching/issues/102) and a
+   [pull request](https://github.com/jupyterhub/jupyterhub-deploy-teaching/pull/103)
+   for this, so this change _might_ become official.
+   In branch [`lab_vs_tree`](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/lab_vs_tree).
+1. When using PAM authentication, create users and groups (one for each
+   JupyterHub user and group, respectively). Also ensure that `jupyterhub_users`
+   includes all group members specified in `jupyterhub_groups` (or empty).
+   In branch [`create_users`](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/create_users).
+
+The original documentation starts below.
+
 # Deploy JupyterHub for teaching
 
 [![Google Group](https://img.shields.io/badge/-Google%20Group-lightgrey.svg)](https://groups.google.com/forum/#!forum/jupyter)
