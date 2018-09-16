@@ -18,19 +18,36 @@
                                     | map(attribute='members') | first }}"
 - name: extract all students
   set_fact:
-    teachers: "{{ jupyterhub_groups | selectattr('name', 'equalto', 'students')
+    students: "{{ jupyterhub_groups | selectattr('name', 'equalto', 'students')
                                     | map(attribute='members') | first }}"
 
+- name: ensure .jupyter directory exists
+  file:
+    path: "/home/{{ item }}/.jupyter"
+    state: directory
+  become: true
+  become_user: "{{ item }}"
+  loop: "{{ teachers }}"
 - name: install the nbgrader configuration files
   template:
     src: nbgrader_config.py.j2
     dest: "/home/{{ item }}/.jupyter/nbgrader_config.py"
   become: true
-  become_user: item
+  become_user: "{{ item }}"
   loop: "{{ teachers }}"
 
+- debug:
+    var: teachers
+- command: whoami
+  register: my_user_name
+  become: true
+  become_user: "{{ teachers | first }}"
+- debug:
+    msg: "My user name is {{ my_user_name }}"
 - name: add students to database
-  command: nbgrader db student add {{ item }}
+  command: "nbgrader db student add {{ item }}"
+  args:
+    chdir: "/home/{{ teachers | first }}"
   become: true
   become_user: "{{ teachers | first }}"
   loop: "{{ students }}"
