@@ -11,6 +11,12 @@ I have made the following changes to the repo:
    JupyterHub user and group, respectively). Also ensure that `jupyterhub_users`
    includes all group members specified in `jupyterhub_groups` (or empty).
    In branch [`create_users`](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/create_users).
+1. Disable the formgrader and create_assignment nbgrader extensions for non-teachers.
+   Sets up nbgrader configuration for all teachers and adds students to the database.
+   Note that I still use the default sqlite backend, so the environment is not
+   safe for concurrent usage (i.e. more than 1 teachers working at the same time).
+   Also checks for the existance of the `teachers` and `students` groups. In branch
+   [nbgrader_setup](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/nbgrader_setup).
 
 The original documentation starts below.
 
