@@ -12,15 +12,6 @@
     mode: 02775
     recurse: yes
 
-- name: extract all teachers
-  set_fact:
-    teachers: "{{ jupyterhub_groups | selectattr('name', 'equalto', 'teachers')
-                                    | map(attribute='members') | first }}"
-- name: extract all students
-  set_fact:
-    students: "{{ jupyterhub_groups | selectattr('name', 'equalto', 'students')
-                                    | map(attribute='members') | first }}"
-
 - name: ensure .jupyter directory exists
   file:
     path: "/home/{{ item }}/.jupyter"
