@@ -17,6 +17,11 @@ I have made the following changes to the repo:
    safe for concurrent usage (i.e. more than 1 teachers working at the same time).
    Also checks for the existance of the `teachers` and `students` groups. In branch
    [nbgrader_setup](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/nbgrader_setup).
+1. Made hostname changing optional. Skip it like this:
+  ```bash
+  ansible-playbook -i hosts deploy.yml --skip-tags hostname
+  ```
+  In branch [no_hostname](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/no_hostname).
 
 The original documentation starts below.
 
