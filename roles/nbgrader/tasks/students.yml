@@ -23,5 +23,3 @@
   loop: "{{ students_ll }}"
   run_once: true
   become: false
-- debug:
-    var: students_dict
