@@ -1,7 +1,7 @@
 ---
 
 # Creates the nbgrader directory and sets up users' configuration accordingly.
-# Only users that belong in the teachers group get access to the directory.
+# Adds students to the database.
 
 - name: create the submissions directory
   file:
@@ -12,29 +12,12 @@
     mode: 02775
     recurse: yes
 
-- name: ensure .jupyter directory exists
-  file:
-    path: "/home/{{ item }}/.jupyter"
-    state: directory
-  become: true
-  become_user: "{{ item }}"
+- name: set up teachers
+  include_tasks: teachers.yml
   loop: "{{ teachers }}"
-- name: install the nbgrader configuration files
-  template:
-    src: nbgrader_config.py.j2
-    dest: "/home/{{ item }}/.jupyter/nbgrader_config.py"
-  become: true
-  become_user: "{{ item }}"
-  loop: "{{ teachers }}"
+  loop_control:
+    loop_var: teacher
 
-- debug:
-    var: teachers
-- command: whoami
-  register: my_user_name
-  become: true
-  become_user: "{{ teachers | first }}"
-- debug:
-    msg: "My user name is {{ my_user_name }}"
 - name: add students to database
   command: "nbgrader db student add {{ item }}"
   args:
