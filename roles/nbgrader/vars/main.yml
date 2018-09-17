@@ -1,2 +1,3 @@
 submissions_prefix: /opt/submissions
 course_id: "course_001"
+students_tsv: students.tsv
