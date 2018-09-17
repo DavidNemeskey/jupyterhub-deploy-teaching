@@ -18,8 +18,12 @@
   loop_control:
     loop_var: teacher
 
+- name: read student information from file
+  include_tasks: students.yml
+  when: students_tsv is defined and students_tsv
+
 - name: add students to database
-  command: "nbgrader db student add {{ item }}"
+  command: "nbgrader db student add {{ item }} {{ (students_dict|default({})).get(item, '') }}"
   args:
     chdir: "/home/{{ teachers | first }}"
   become: true

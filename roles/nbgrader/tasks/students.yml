@@ -1,0 +1,27 @@
+---
+
+# Reads students.tsv into {user_name: first name, given name(s), email}
+# The file should contain the same columns, and it should be on the host.
+# Hopefully, everything only runs once.
+#
+# Input: students_tsv (path to the file)
+# Output: students_dict
+
+- local_action: "command cat {{ students_tsv }}"
+  register: students_str
+  run_once: true
+  become: false
+- local_action:
+    module: set_fact
+    students_ll: "{{ students_ll|default([]) + [ item.split('\t') ] }}" 
+  loop: "{{ students_str.stdout_lines }}"
+  run_once: true
+  become: false
+- local_action:
+    module: set_fact
+    students_dict: "{{ students_dict|default({}) | combine({item[0]: ([\" --last-name='\", item[1], \"' --first-name='\", item[2], \"' --email='\", item[3], \"'\"]) | join('') }) }}" 
+  loop: "{{ students_ll }}"
+  run_once: true
+  become: false
+- debug:
+    var: students_dict

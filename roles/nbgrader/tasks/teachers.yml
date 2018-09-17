@@ -1,0 +1,32 @@
+---
+
+# Sets up the environment for the teachers. The setup supports multiple
+# teachers, but to make it safe, the default database (sqlite) has to be
+# changed to a proper DB (see https://nbgrader.readthedocs.io/en/master/configuration/jupyterhub_config.html#example-use-case-one-class-multiple-graders).
+#
+# Only users that belong in the teachers group get access to the root directory.
+# Since we cannot set a user-agnostic directory
+# (see https://github.com/jupyter/nbgrader/issues/1012) as the root, we create
+# links to it from the teachers' home directories instead.
+
+- name: ensure .jupyter directory exists
+  file:
+    path: "/home/{{ teacher }}/.jupyter"
+    state: directory
+  become: true
+  become_user: "{{ teacher }}"
+
+- name: link the root directory 
+  file:
+    path: "/home/{{ teacher }}/nbgrader"
+    src: "{{ submissions_prefix }}"
+    state: link
+  become: true
+  become_user: "{{ teacher }}"
+
+- name: install the nbgrader configuration files
+  template:
+    src: nbgrader_config.py.j2
+    dest: "/home/{{ teacher }}/.jupyter/nbgrader_config.py"
+  become: true
+  become_user: "{{ teacher }}"
