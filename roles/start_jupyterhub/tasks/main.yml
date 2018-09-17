@@ -5,3 +5,7 @@
 
 - name: restart jupyterhub with supervisor
   supervisorctl: name=jupyterhub state=restarted
+  ignore_errors: yes
+
+# Must ignore errors because JupyterHub sucks.
+# See https://github.com/jupyterhub/jupyterhub-deploy-teaching/issues/104.
