@@ -1,6 +1,5 @@
 ---
 
-
 - name: extract all teachers
   set_fact:
     teachers: "{{ jupyterhub_groups | default([])
