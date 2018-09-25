@@ -22,6 +22,8 @@ I have made the following changes to the repo:
   ansible-playbook -i hosts deploy.yml --skip-tags hostname
   ```
   In branch [no_hostname](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/no_hostname).
+1. Install jupyter_contrib_nbextensions and enable the variable inspector.
+  In branch [nbextensions](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/nbextensions).
 
 The original documentation starts below.
 
