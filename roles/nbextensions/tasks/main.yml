@@ -1,0 +1,19 @@
+---
+
+# Installs the jupyter_contrib_nbextensions package and enables some of the
+# extensions
+
+- name: install jupyter_contrib_nbextensions
+  pip: name=jupyter_contrib_nbextensions state=present executable=pip
+  become: true
+
+- name: install contrib nbextensions
+  command: jupyter contrib nbextension install --sys-prefix --symlink
+  become: true
+
+- name: enable contrib nbextensions
+  command: jupyter nbextension enable {{ extension }} --sys-prefix
+  become: true
+  loop: "{{ contrib_nbextensions }}"
+  loop_control:
+      loop_var: extension
