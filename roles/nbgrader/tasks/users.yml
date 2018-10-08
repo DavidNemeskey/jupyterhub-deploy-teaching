@@ -12,6 +12,9 @@
     mode: 02775
     recurse: yes
 
+- name: copy the grade exporter script file to the submissions directory
+  copy: src=md_exporter.py dest={{ submissions_prefix }} owner=root group=teachers mode=0750
+
 - name: set up teachers
   include_tasks: teachers.yml
   loop: "{{ teachers }}"

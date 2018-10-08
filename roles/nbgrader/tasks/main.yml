@@ -5,17 +5,25 @@
     teachers: "{{ jupyterhub_groups | default([])
                                     | selectattr('name', 'equalto', 'teachers')
                                     | map(attribute='members') | first }}"
+  tags: [ "always" ]
+
 - name: extract all students
   set_fact:
     students: "{{ jupyterhub_groups | default([])
                                     | selectattr('name', 'equalto', 'students')
                                     | map(attribute='members') | first }}"
+  tags: [ "always" ]
 
 - name: check if the students and teachers groups exist
   assert:
     that: "{{ (teachers | length > 0) and (students | length > 0) }} "
     msg: "you should only use nbgrader if the teachers and students groups are defined"
+  tags: [ "always" ]
 
 - include_tasks: install.yml
 - include_tasks: users.yml
 - include_tasks: extensions.yml
+- include_tasks: export.yml
+  tags:
+    - never
+    - grade_export

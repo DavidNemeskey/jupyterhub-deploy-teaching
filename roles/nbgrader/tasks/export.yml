@@ -1,0 +1,32 @@
+---
+
+# Export students' grades.
+
+- name: runs ngrader export
+  shell: ". /etc/profile && nbgrader export --exporter=md_exporter.MDExporter"
+  args:
+    chdir: "/opt/submissions"
+  become: true
+  become_user: "{{ teachers[0] }}"
+  tags:
+      - never
+      - grade_export
+
+- name: copy the grades to each student's home
+  shell: "cp {{ submissions_prefix }}/grades/{{ student }}/grades.ipynb /home/{{ student }}/"
+  become: true
+  become_user: "{{ student }}"
+  loop: "{{ students }}"
+  loop_control:
+    loop_var: student
+  tags:
+      - never
+      - grade_export
+
+- name: delete the grades directory
+  file:
+    path: "{{ submissions_prefix }}/grades"
+    state: absent
+  tags:
+      - never
+      - grade_export
