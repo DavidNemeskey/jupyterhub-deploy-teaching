@@ -22,6 +22,10 @@ I have made the following changes to the repo:
   ansible-playbook -i hosts deploy.yml --skip-tags hostname
   ```
   In branch [no_hostname](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/no_hostname).
+1. Added a grade export task file to the nbgrader role. Can be activated by the
+   `grade_export` tag.
+   In branch [grade_export](https://github.com/DavidNemeskey/jupyterhub-deploy-teaching/tree/grade_export).
+   
 
 The original documentation starts below.
 
