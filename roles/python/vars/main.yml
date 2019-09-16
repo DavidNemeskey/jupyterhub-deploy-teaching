@@ -1,11 +1,9 @@
-miniconda_version: 4.3.31
+miniconda_version: 4.7.10
 conda_installer: Miniconda3-{{miniconda_version}}-Linux-x86_64.sh
 conda_prefix: /opt/conda
-conda_checksum: "md5:7fe70b214bee1143e3e3f0467b71453c"
+conda_checksum: "md5:1c945f2b3335c7b2b15130b1b2dc5cf4"
 conda_config:
   channels:
-    - conda-forge
-    - pytorch
     - defaults
   show_channel_urls: yes
 
