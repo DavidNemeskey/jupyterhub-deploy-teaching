@@ -144,3 +144,21 @@ The logs for nbgrader are in ``/var/log/nbgrader``.
 ### Starting, stopping, and restarting the Hub
 To manage the jupyterhub and nbgrader services by SSH to the server
 and run: ``supervisorctl jupyterhub [start|stop|restart]``
+
+## MY Notes
+
+- Currently users get a 403 : Authentication error when logging in. Either use
+  a newer version of JupyterHub or create `/etc/jupyter/jupyter_notebook_config.py`
+  with the content:
+
+  ```
+  c = get_config()
+  c.NotebookApp.allow_remote_access = True
+  ```
+
+  See [here](https://github.com/jupyterhub/jupyterhub/issues/2230) for more
+  information
+- New nbgrader (0.6.0) means upgrading. See
+[the changelog](ihttps://nbgrader.readthedocs.io/en/stable/changelog.html).
+- Installing JupyterLab extensions fails the second time around (i.e. if
+  anything else fails in the playbook after it...), so comment it out then.
