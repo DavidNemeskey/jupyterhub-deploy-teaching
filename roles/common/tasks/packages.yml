@@ -21,20 +21,16 @@
   become: true
 
 - name: install other developer tools
-  apt: pkg={{item}} state=present
+  apt:
+    pkg: ['gfortran', 'git']
+    state: present
   become: true
-  with_items:
-    - gfortran
-    - git
 
 - name: install user applications
-  apt: pkg={{item}} state=present
+  apt:
+    pkg: ['vim', 'emacs', 'tree', 'htop']
+    state: present
   become: true
-  with_items:
-    - vim
-    - emacs
-    - tree
-    - htop
 
 - name: install open-iscsi for cloud block volumes
   apt: pkg=open-iscsi state=present
