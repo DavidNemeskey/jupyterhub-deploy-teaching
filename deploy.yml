@@ -53,6 +53,7 @@
     - role: nbextensions
       when: contrib_nbextensions is defined and contrib_nbextensions
     - role: start_jupyterhub
-    - course
+    - role: course
+      when: course_dir is defined
   environment:
       PATH: "/opt/conda/bin:{{ default_path.stdout }}"
