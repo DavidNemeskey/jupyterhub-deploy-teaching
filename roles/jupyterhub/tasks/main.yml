@@ -3,6 +3,8 @@
 - include_tasks: packages.yml
 - include_tasks: directories.yml
 - include_tasks: config.yml
+  tags:
+    - manage_users
 - include_tasks: googleanalytics.yml
 - include_tasks: supervisor.yml
 

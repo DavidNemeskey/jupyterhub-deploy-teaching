@@ -12,6 +12,8 @@
 
     - command: echo "$PATH"
       register: default_path
+  tags:
+    - always
 
 
 - hosts: jupyterhub_hosts
@@ -20,12 +22,15 @@
     - name: Make sure we are running on Ubuntu
       fail: msg="This ansible setup only works on Ubuntu"
       when: ansible_distribution != 'Ubuntu' 
+  tags:
+    - always
 
 
 - hosts: jupyterhub_hosts
 
   roles:
-    - common
+    - role: common
+      tags: always
     - python
     - role: r
       when: install_r_kernel is defined and install_r_kernel
@@ -36,6 +41,8 @@
     - saveusers
     - role: create_users_groups
       when: use_oauth is not defined or not use_oauth
+      tags:
+        - manage_users
     - role: bash
       when: install_bash_kernel is defined and install_bash_kernel
     - jupyterhub
@@ -46,5 +53,6 @@
     - role: nbextensions
       when: contrib_nbextensions is defined and contrib_nbextensions
     - role: start_jupyterhub
+    - course
   environment:
       PATH: "/opt/conda/bin:{{ default_path.stdout }}"
