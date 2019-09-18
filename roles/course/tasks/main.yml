@@ -1,0 +1,69 @@
+---
+
+- name: Check if course_dir is defined
+  assert:
+    that: course_dir is defined
+    msg: The course_dir variable must be defined for this task to work.
+
+- name: Copies all notebooks (and related files) into the users' home directories
+  synchronize:
+    src: "{{ course_dir }}/notebooks"
+    dest: "/home/{{ user }}"
+    # This might be required so that it works the same for all users (i.e.
+    # for users that are in the group the original file is, group=yes would
+    # keep it in that group, as opposed to the user's primary group)
+    group: no
+    rsync_opts:
+        - "--ignore-existing"
+  delegate_to: "{{ inventory_hostname }}"
+  # Note: this assumes that users have read access to the course_material
+  # directory; otherwise, synchronize + chown should work
+  become: true
+  become_user: "{{ user }}"
+  loop: "{{ jupyterhub_users }}"
+  loop_control:
+    loop_var: user
+  tags:
+    - manage_users
+
+- name: Copies the style file(s) into the users' home directories
+  synchronize:
+    src: "{{ course_dir }}/styles"
+    dest: "/home/{{ user }}"
+    group: no
+    rsync_opts:
+        - "--ignore-existing"
+  delegate_to: "{{ inventory_hostname }}"
+  loop: "{{ jupyterhub_users }}"
+  loop_control:
+    loop_var: user
+  tags:
+    - manage_users
+
+# - name: copy project
+#   shell: "cp -r /opt/course_material/project/P* /home/{{ user }}/project/"
+#   become: true
+#   become_user: "{{ user }}"
+#   loop: "{{ jupyterhub_users }}"
+#   loop_control:
+#     loop_var: user
+
+# - name: create student_projects directory
+#   file:
+#     path: "/home/{{ user }}/student_projects"
+#     state: directory
+#   become: true
+#   become_user: "{{ user }}"
+
+# - name: delete the contents of the student_projects directory
+#   shell: "rm -rf /home/{{ user }}/student_projects/*"
+#   become: true
+#   become_user: "{{ user }}"
+# 
+# - name: copy projects to teacher's directory
+#   shell: "cp -r /home/{{ user }}/project/ /home/{{ jupyterhub_groups["teachers"][0] }}/student_projects/{{ user }}/"
+#   become: true
+#   become_user: "{{ jupyterhub_groups["teachers"][0] }}"
+#   loop: "{{ jupyterhub_users }}"
+#   loop_control:
+#     loop_var: user

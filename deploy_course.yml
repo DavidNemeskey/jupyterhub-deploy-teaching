@@ -1,0 +1,10 @@
+---
+# The playbook deploys JupyterHub.
+# This file would be equivalent to a `sites.yml` file in Ansible terms.
+
+
+- hosts: jupyterhub_hosts
+
+  roles:
+    - role: course
+      when: course_dir is defined
