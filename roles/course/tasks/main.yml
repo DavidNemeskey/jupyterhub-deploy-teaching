@@ -6,34 +6,7 @@
     msg: The course_dir variable must be defined for this task to work.
 
 - name: Copies all notebooks (and related files) into the users' home directories
-  synchronize:
-    src: "{{ course_dir }}/notebooks"
-    dest: "/home/{{ user }}"
-    # This might be required so that it works the same for all users (i.e.
-    # for users that are in the group the original file is, group=yes would
-    # keep it in that group, as opposed to the user's primary group)
-    group: no
-    rsync_opts:
-        - "--ignore-existing"
-  delegate_to: "{{ inventory_hostname }}"
-  # Note: this assumes that users have read access to the course_material
-  # directory; otherwise, synchronize + chown should work
-  become: true
-  become_user: "{{ user }}"
-  loop: "{{ jupyterhub_users }}"
-  loop_control:
-    loop_var: user
-  tags:
-    - manage_users
-
-- name: Copies the style file(s) into the users' home directories
-  synchronize:
-    src: "{{ course_dir }}/styles"
-    dest: "/home/{{ user }}"
-    group: no
-    rsync_opts:
-        - "--ignore-existing"
-  delegate_to: "{{ inventory_hostname }}"
+  include_tasks: sync.yml
   loop: "{{ jupyterhub_users }}"
   loop_control:
     loop_var: user
