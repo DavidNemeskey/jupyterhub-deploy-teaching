@@ -1,0 +1,22 @@
+---
+
+- synchronize:
+    src: "{{ course_dir }}/{{ content }}"
+    dest: "/home/{{ user }}"
+    # This might be required so that it works the same for all users (i.e.
+    # for users that are in the group the original file is, group=yes would
+    # keep it in that group, as opposed to the user's primary group)
+    group: no
+    rsync_opts:
+        - "--ignore-existing"
+  delegate_to: "{{ inventory_hostname }}"
+  # Note: this assumes that users have read access to the course_material
+  # directory; otherwise, synchronize + chown should work
+  become: true
+  become_user: "{{ user }}"
+  loop:
+    - notebooks
+    - styles
+    - project
+  loop_control:
+    loop_var: content
